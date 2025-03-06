@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import auth from '../middlewares/auth.js';
@@ -20,7 +20,7 @@ import userLoginSchema from '../validation/auth/login.js';
 import sendCodeEmailSchema from '../validation/auth/sendCodeEmail.js';
 import verifyCodeSchema from '../validation/auth/verifyCode.js';
 
-const authRouter = express.authRouter();
+const authRouter = Router();
 
 authRouter.post('/signup', userRegisterSchema, ctrlWrapper(register));
 authRouter.post('/signin', userLoginSchema, ctrlWrapper(login));
