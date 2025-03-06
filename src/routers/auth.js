@@ -20,15 +20,15 @@ import userLoginSchema from '../validation/auth/login.js';
 import sendCodeEmailSchema from '../validation/auth/sendCodeEmail.js';
 import verifyCodeSchema from '../validation/auth/verifyCode.js';
 
-const router = express.Router();
+const authRouter = express.authRouter();
 
-router.post('/signup', userRegisterSchema, ctrlWrapper(register));
-router.post('/signin', userLoginSchema, ctrlWrapper(login));
-router.post('/logout', auth, ctrlWrapper(logout));
-router.get('/refresh/current', authRefresh, ctrlWrapper(refreshToken));
-router.get('/verify/:verificationToken', ctrlWrapper(verifyEmail));
-router.post('/send/verify', sendCodeEmailSchema, ctrlWrapper(sendCode));
-router.post('/verify', verifyCodeSchema, ctrlWrapper(verifyCode));
-router.delete('/delete/account', auth, ctrlWrapper(deleteAccountUser));
+authRouter.post('/signup', userRegisterSchema, ctrlWrapper(register));
+authRouter.post('/signin', userLoginSchema, ctrlWrapper(login));
+authRouter.post('/logout', auth, ctrlWrapper(logout));
+authRouter.get('/refresh/current', authRefresh, ctrlWrapper(refreshToken));
+authRouter.get('/verify/:verificationToken', ctrlWrapper(verifyEmail));
+authRouter.post('/send/verify', sendCodeEmailSchema, ctrlWrapper(sendCode));
+authRouter.post('/verify', verifyCodeSchema, ctrlWrapper(verifyCode));
+authRouter.delete('/delete/account', auth, ctrlWrapper(deleteAccountUser));
 
-export default router;
+export default authRouter;

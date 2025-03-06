@@ -9,18 +9,17 @@ import {
 
 import auth from '../middlewares/auth.js';
 
-
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { reviewSchema } from '../validation/reviews/reviewsValidation.js';
 
+const reviewRoutes = express.reviewRoutes();
 
-const router = express.Router();
+reviewRoutes.get('/', ctrlWrapper(getReviews));
+reviewRoutes.use(auth);
+reviewRoutes.post('/', validateBody(reviewSchema), ctrlWrapper(addReview));
+reviewRoutes.delete('/:id', ctrlWrapper(deleteReview));
+reviewRoutes.patch('/:id/reply', ctrlWrapper(replyToReview));
+reviewRoutes.post('/:id/report', ctrlWrapper(reportReview));
 
-router.post('/', auth, validateBody(reviewSchema), ctrlWrapper(addReview)); 
-router.get('/', ctrlWrapper(getReviews));
-router.delete('/:id', auth, ctrlWrapper(deleteReview));
-router.patch('/:id/reply', auth, ctrlWrapper(replyToReview));
-router.post('/:id/report', auth, ctrlWrapper(reportReview));
-
-export default router;
+export default reviewRoutes;
