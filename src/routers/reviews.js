@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import {
   addReview,
   getReviews,
@@ -13,7 +13,7 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { reviewSchema } from '../validation/reviews/reviewsValidation.js';
 
-const reviewRoutes = express.reviewRoutes();
+const reviewRoutes = Router();
 
 reviewRoutes.get('/', ctrlWrapper(getReviews));
 reviewRoutes.use(auth);

@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import { Router } from 'express';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import auth from '../middlewares/auth.js';
