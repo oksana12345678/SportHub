@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@redocly/cli": "^1.31.3",
+    "ajv": "^8.17.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
