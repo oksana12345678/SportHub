@@ -1,79 +1,82 @@
-import { SORT_ORDER } from "../../constants/sortOrder.js";
-import CardCollection from "../../db/models/Cards.js";
-import { calculatePaginationData } from "../../utils/calculatePaginationData.js";
+import { SORT_ORDER } from '../../constants/sortOrder.js';
+import { UserProfileModel } from '../../db/models/UserProfileModel.js';
+import { calculatePaginationData } from '../../utils/calculatePaginationData.js';
 
 export const getAllCards = async ({
-    page = 1,
-    perPage = 10,
-    sortOrder = SORT_ORDER.ASC,
-    sortBy = "rating",
-    filter = {} }) => {
-    const limit = perPage;
-    const skip = (page - 1) * perPage;
+  page = 1,
+  perPage = 10,
+  sortOrder = SORT_ORDER.ASC,
+  sortBy = 'rating',
+  filter = {},
+}) => {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
 
-    const cardsQuery = CardCollection.find();
+  const cardsQuery = UserProfileModel.find();
 
-    // Фільтр за містом
-    if (filter.address) cardsQuery.where("address").regex(new RegExp(filter.address, 'i'));
+  // Фільтр за містом
+  if (filter.address)
+    cardsQuery.where('address').regex(new RegExp(filter.address, 'i'));
 
-    // Фільтр за типом (тренер або клуб)
-    if (filter.type) cardsQuery.where("type").equals(filter.type);
+  // Фільтр за типом (тренер або клуб)
+  if (filter.type) cardsQuery.where('type').equals(filter.type);
 
-    // Мінімальна кількість відгуків
-    if (filter.reviewCount) cardsQuery.where("reviewCount").gte(filter.reviewCount);
+  // Мінімальна кількість відгуків
+  if (filter.reviewCount)
+    cardsQuery.where('reviewCount').gte(filter.reviewCount);
 
-    // Фільтр за ціновим діапазоном
-    if (filter.minPrice) cardsQuery.where('price').gte(filter.minPrice);
-    if (filter.maxPrice) cardsQuery.where('price').lte(filter.maxPrice);
+  // Фільтр за ціновим діапазоном
+  if (filter.minPrice) cardsQuery.where('price').gte(filter.minPrice);
+  if (filter.maxPrice) cardsQuery.where('price').lte(filter.maxPrice);
 
-    // Фільтр за послугами (класифікацією)
-    if (filter.services && filter.services.length > 0) cardsQuery.where("services").in(filter.services);
+  // Фільтр за послугами (класифікацією)
+  if (filter.services && filter.services.length > 0)
+    cardsQuery.where('services').in(filter.services);
 
-    // Сортування
-    if (filter.sort) {
-        switch (filter.sort) {
-            case "нові":
-                sortBy = "createdAt";
-                sortOrder = "desc";
-                break;
-            case "популярні":
-                sortBy = "reviewCount";
-                sortOrder = "desc";
-                break;
-            case "ціна за зростанням":
-                sortBy = "price";
-                sortOrder = "asc";
-                break;
-            case "ціна за спаданням":
-                sortBy = "price";
-                sortOrder = "desc";
-                break;
-        }
-    };
+  // Сортування
+  if (filter.sort) {
+    switch (filter.sort) {
+      case 'нові':
+        sortBy = 'createdAt';
+        sortOrder = 'desc';
+        break;
+      case 'популярні':
+        sortBy = 'reviewCount';
+        sortOrder = 'desc';
+        break;
+      case 'ціна за зростанням':
+        sortBy = 'price';
+        sortOrder = 'asc';
+        break;
+      case 'ціна за спаданням':
+        sortBy = 'price';
+        sortOrder = 'desc';
+        break;
+    }
+  }
 
-    const cardsCount = await CardCollection
-        .find()
-        .merge(cardsQuery)
-        .countDocuments();
+  const cardsCount = await UserProfileModel.find()
+    .merge(cardsQuery)
+    .countDocuments();
 
-    const cards = await cardsQuery
-        .skip(skip)
-        .limit(limit)
-        .sort({ [sortBy]: sortOrder })
-        .exec();
+  const cards = await cardsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
 
-    const paginationData = calculatePaginationData(cardsCount, perPage, page);
+  const paginationData = calculatePaginationData(cardsCount, perPage, page);
 
-    return {
-        data: cards,
-        ...paginationData
-    };
+  return {
+    data: cards,
+    ...paginationData,
+  };
 };
 
-export const getCardById = async () => { };
+export const getCardById = async () => {};
 
-export const createCard = async () => { };
+export const createCard = async () => {};
 
-export const updateCard = async () => { };
+export const updateCard = async () => {};
 
-export const deleteCard = async () => { };
+export const deleteCard = async () => {};
