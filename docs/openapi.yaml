@@ -1,11 +1,11 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: <SportPoint App>
+  title: <SportHub App>
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: <Service for working with contacts documentation. >
+  description: <Service for working with backend endpoints documentation. >
   contact:
     email: oksana.tanashuk@gmail.com
 tags:
@@ -15,6 +15,7 @@ tags:
     description: Operations about users profiles.
 servers:
   - url: http://localhost:3000
+  - url: https://sporthub-1oiu.onrender.com
 paths:
   /auth/signup:
     post:
