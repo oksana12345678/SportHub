@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
-import { handleSaveError, setupUpdateValidator } from '../../helpers/helpers';
+import {
+  handleSaveError,
+  setupUpdateValidator,
+} from '../../helpers/helpers.js';
 
 const socialLinkSchema = new mongoose.Schema({
   name: { type: String, required: true },
