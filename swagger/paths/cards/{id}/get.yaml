@@ -1,0 +1,117 @@
+tags:
+  - Cards
+summary: Get  card by id
+operationId: getCard
+description: 'Retrieve coach or club card by id !'
+security:
+  - bearerAuth: []
+parameters:
+  - name: id
+    in: path
+    required: false
+    schema:
+      type: string
+      example: 67c4c89d4d695e8b07c91dab
+    description: 'Card id '
+responses:
+  '200':
+    description: 'Found card with by id!'
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found card with id 65ca67e7ae7f10c88b598384!
+            data:
+              type: array
+              items:
+                $ref: ../../../components/schemas/userProfile.yaml
+            userComments:
+              type: array
+              items:
+                $ref: '../../../components/schemas/reviews.yaml'
+            paginationData:
+              type: object
+              properties:
+                totalItems:
+                  type: integer
+                totalPages:
+                  type: integer
+                currentPage:
+                  type: integer
+            club:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: "ID of the club"
+                    example: "65ca63kj7ae7f10c88b598384"
+                  firstName:
+                    type: string
+                    description: "Name of the club"
+                    example: "Fitness Club"
+                  lastName:
+                    type: string
+                    description: "Name of the club"
+                    example: "Fitness Club"
+                  address:
+                    type: string
+                    description: "Address of the club"
+                    example: "123 Main St"
+                  city:
+                    type: string
+                    description: "City of the club"
+                    example: "New York"
+              description: "List of clubs where the coach works"
+              example:
+                - id: "65ca63kj7ae7f10c88b598384"
+                  firstName: "Fitness Club"
+                  address: "123 Main St"
+                  city: "New York"
+                - id: "65coo7e7ae7f10c88b598384"
+                  firstName: "Yoga"
+                  lastName: "Wellness"
+                  address: "456 Elm St"
+                  city: "Los Angeles"
+            coach:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: "ID of the coach job"
+                    example: "65ca63kj7ae7f10c88b598384"
+                  name:
+                    type: string
+                    description: "Name of the coach job"
+                    example: "Personal Trainer"
+                  address:
+                    type: string
+                    description: "Address of the coach job"
+                    example: "789 Oak St"
+                  city:
+                    type: string
+                    description: "City of the coach job"
+                    example: "New York"
+              description: "List of current coach jobs at this sports club"
+              example:
+                - id: "65ca63kj7ae7f10c88b598384"
+                  name: "Personal Trainer"
+                  address: "789 Oak St"
+                - id: "65coo7e7ae7f10c88b598384"
+                  name: "Group Trainer"
+                  address: "101 Pine St"
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../components/responses/404.yaml'

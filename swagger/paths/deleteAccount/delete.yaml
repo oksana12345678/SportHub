@@ -1,13 +1,13 @@
 tags:
-  - UserProfile
-summary: Delete user profile
-operationId: deleteUserProfile
-description: 'Delete  user profile'
+  - Auth
+summary: Delete user account
+operationId: deleteUserAccount
+description: 'Delete  user account'
 security:
   - bearerAuth: []
 responses:
   '204':
-    description: 'Delete  user profile'
+    description: 'Delete  user account'
     content:
       application/json:
         schema:

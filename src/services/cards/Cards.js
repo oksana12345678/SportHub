@@ -1,82 +1,118 @@
-import { SORT_ORDER } from '../../constants/sortOrder.js';
-import { UserProfileModel } from '../../db/models/UserProfileModel.js';
-import { calculatePaginationData } from '../../utils/calculatePaginationData.js';
+import { SORT_ORDER } from "../../constants/sortOrder.js";
+import { ReviewsCollection } from "../../db/models/Review.js";
+import { UserProfileModel } from "../../db/models/UserProfileModel.js";
+import { calculatePaginationData } from "../../utils/calculatePaginationData.js";
 
 export const getAllCards = async ({
-  page = 1,
-  perPage = 10,
-  sortOrder = SORT_ORDER.ASC,
-  sortBy = 'rating',
-  filter = {},
-}) => {
-  const limit = perPage;
-  const skip = (page - 1) * perPage;
+    page = 1,
+    perPage = 10,
+    sortOrder = SORT_ORDER.ASC,
+    sortBy = "rating",
+    filter = {} }) => {
 
-  const cardsQuery = UserProfileModel.find();
+    const matchStage = {};
+    const pipeline = [];
 
-  // Фільтр за містом
-  if (filter.address)
-    cardsQuery.where('address').regex(new RegExp(filter.address, 'i'));
+    pipeline.push({ $unwind: { path: "$description.price", preserveNullAndEmptyArrays: true } });
 
-  // Фільтр за типом (тренер або клуб)
-  if (filter.type) cardsQuery.where('type').equals(filter.type);
+    pipeline.push({
+        $addFields: {
+            convertedPrice: {
+                $convert: {
+                    input: "$description.price.amount",
+                    to: "double",
+                    onError: 0,
+                    onNull: 0
+                }
+            }
+        }
+    });
 
-  // Мінімальна кількість відгуків
-  if (filter.reviewCount)
-    cardsQuery.where('reviewCount').gte(filter.reviewCount);
-
-  // Фільтр за ціновим діапазоном
-  if (filter.minPrice) cardsQuery.where('price').gte(filter.minPrice);
-  if (filter.maxPrice) cardsQuery.where('price').lte(filter.maxPrice);
-
-  // Фільтр за послугами (класифікацією)
-  if (filter.services && filter.services.length > 0)
-    cardsQuery.where('services').in(filter.services);
-
-  // Сортування
-  if (filter.sort) {
-    switch (filter.sort) {
-      case 'нові':
-        sortBy = 'createdAt';
-        sortOrder = 'desc';
-        break;
-      case 'популярні':
-        sortBy = 'reviewCount';
-        sortOrder = 'desc';
-        break;
-      case 'ціна за зростанням':
-        sortBy = 'price';
-        sortOrder = 'asc';
-        break;
-      case 'ціна за спаданням':
-        sortBy = 'price';
-        sortOrder = 'desc';
-        break;
+    if (filter.address) {
+        matchStage['description.address'] = { $regex: filter.address, $options: "i" };
     }
-  }
 
-  const cardsCount = await UserProfileModel.find()
-    .merge(cardsQuery)
-    .countDocuments();
+    if (filter.city) {
+        matchStage['description.city'] = { $regex: filter.city, $options: "i" };
+    }
 
-  const cards = await cardsQuery
-    .skip(skip)
-    .limit(limit)
-    .sort({ [sortBy]: sortOrder })
-    .exec();
+    if (filter.minPrice || filter.maxPrice) {
+        const min = filter.minPrice ? Number(filter.minPrice) : 0;
+        const max = filter.maxPrice ? Number(filter.maxPrice) : 1000000;
 
-  const paginationData = calculatePaginationData(cardsCount, perPage, page);
+        matchStage['convertedPrice'] = { $gte: min, $lte: max };
+    }
 
-  return {
-    data: cards,
-    ...paginationData,
-  };
+    if (filter.role) {
+        matchStage['role'] = filter.role;
+    }
+
+    if (filter.countReview) {
+        matchStage['countReview'] = { $gte: filter.countReview };
+    }
+
+    if (filter.rating) {
+        matchStage['rating'] = { $gte: filter.rating };
+    }
+
+    if (filter.abilities && filter.abilities.length > 0) {
+        matchStage['description.abilities'] = { $in: filter.abilities };
+    }
+
+    pipeline.push({ $match: matchStage });
+
+    const sortDirection = sortOrder === "desc" ? -1 : 1;
+    let sortField = 'createdAt';
+
+    switch (filter.sort) {
+        case "new":
+            sortField = "createdAt";
+            break;
+        case "popular":
+            sortField = 'countReview';
+            break;
+        case "price_asc":
+        case "price_dsc":
+            sortField = 'convertedPrice';
+            break;
+        default:
+            sortField = 'createdAt';
+    }
+
+    pipeline.push({ $sort: { [sortField]: sortDirection } });
+
+    if (typeof sortField !== 'string') {
+        pipeline.unshift({ $addFields: { convertedPrice: sortField } });
+    }
+
+    const limit = perPage;
+    const skip = (page - 1) * perPage;
+
+    pipeline.push({ $skip: skip });
+    pipeline.push({ $limit: limit });
+
+    const cards = await UserProfileModel.aggregate(pipeline);
+
+    const totalResult = await UserProfileModel.aggregate([
+        ...(Object.keys(matchStage).length > 0 ? [{ $match: matchStage }] : []),
+        { $count: "total" }
+    ]);
+
+    const totalItems = totalResult[0]?.total || 0;
+    const paginationData = calculatePaginationData(totalItems, perPage, page);
+
+    return {
+        data: cards,
+        ...paginationData
+    };
 };
 
-export const getCardById = async () => {};
+export const getCardById = async (id) => {
+    const card = await UserProfileModel.findOne({ _id: id });
+    const userComments = await ReviewsCollection.findOne({ owner: card.userId });
 
-export const createCard = async () => {};
-
-export const updateCard = async () => {};
-
-export const deleteCard = async () => {};
+    return {
+        data: card,
+        userComments
+    };
+};

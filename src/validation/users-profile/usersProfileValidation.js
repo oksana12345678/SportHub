@@ -1,12 +1,22 @@
 import Joi from 'joi';
 import { patternLines } from '../../constants/patternLines.js';
 
-export const descriptionSchemaJoi = Joi.object({
+const workSchema = Joi.object({
+  firstName: Joi.string(),
+  lastName: Joi.string(),
   address: Joi.string(),
+  city: Joi.string(),
+});
+
+const descriptionSchemaJoi = Joi.object({
+  address: Joi.string(),
+  city: Joi.string(),
   short_desc: Joi.string(),
-  abilities: Joi.string(),
+  abilities: Joi.array().items(Joi.string()),
   equipment: Joi.array().items(Joi.string()),
-  experience: Joi.array().items(Joi.date().iso()),
+  age: Joi.string(),
+  // experience: Joi.array().items(Joi.date().iso()),
+  experience: Joi.number(),
   schedule: Joi.array().items(
     Joi.object({
       days: Joi.string(),
@@ -23,6 +33,7 @@ export const descriptionSchemaJoi = Joi.object({
   price: Joi.array().items(
     Joi.object({
       name: Joi.string(),
+      description: Joi.string(),
       amount: Joi.string().required(),
     }),
   ),
@@ -31,20 +42,22 @@ export const descriptionSchemaJoi = Joi.object({
 });
 
 export const userProfileSchemaJoi = Joi.object({
-  firstLastName: Joi.string().min(2).max(50),
+  firstName: Joi.string().min(2).max(50),
+  lastName: Joi.string().min(2).max(50),
   avatar: Joi.string().uri(),
   images: Joi.array().items(Joi.string().uri()),
   certificates: Joi.array().items(Joi.string().uri()),
   description: descriptionSchemaJoi.optional(),
-  club: Joi.array().items(Joi.string()).optional(),
-  couch: Joi.array().items(Joi.string()).optional(),
-
+  club: workSchema,
+  coach: workSchema,
   //TODO change if you need
   favorite: Joi.array().items(Joi.object({ type: Joi.string() })),
+  sport: Joi.string(),
 });
 
 export const userProfileUpdateSchemaJoi = Joi.object({
-  name: Joi.string().min(2).max(50),
+  firstName: Joi.string().min(2).max(50),
+  lastName: Joi.string().min(2).max(50),
   avatar: Joi.string().uri().allow(null, ''),
   images: Joi.array().items(Joi.string().uri()),
   club: Joi.array()
@@ -57,7 +70,7 @@ export const userProfileUpdateSchemaJoi = Joi.object({
       }
       return value;
     }),
-  couch: Joi.array()
+  coach: Joi.array()
     .items(Joi.string())
     .optional()
     .custom((value, helpers) => {

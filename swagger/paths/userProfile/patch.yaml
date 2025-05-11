@@ -12,12 +12,18 @@ requestBody:
         type: object
         required: []
         properties:
-          firstLastName:
+          firstName:
             type: string
             minLength: 2
             maxLength: 50
-            description: 'First and Last name of the user or sport club name .'
+            description: 'First  name of the user or sport club name .'
             example: 'John Doe || Beast Gim'
+          lastName:
+            type: string
+            minLength: 2
+            maxLength: 50
+            description: ' Last name of the user.'
+            example: 'Doe'
           avatar:
             type: string
             format: binary
@@ -48,14 +54,24 @@ requestBody:
                 type: string
                 description: 'Address of the sport club.'
                 example: '123 Main St'
+              city:
+                type: string
+                description: 'City of the sport club.'
+                example: 'New York'
               short_desc:
                 type: string
                 description: 'Short description of the coach or sport club.'
                 example: 'Experienced coach in football.'
               abilities:
-                type: string
+                type: array
                 description: 'Coach abilities.'
-                example: 'Coaching, mentoring'
+                example:
+                  - 'Coaching'
+                  - 'Mentoring'
+              age:
+                type: string
+                description: 'User age'
+                example: '40'
               equipment:
                 type: array
                 items:
@@ -65,14 +81,9 @@ requestBody:
                   - 'Pool'
                   - 'Sauna'
               experience:
-                type: array
-                items:
-                  type: string
-                  format: date
+                type: string
                 description: 'Experience dates of the user.'
-                example:
-                  - '2020-01-01'
-                  - '2021-01-01'
+                example: '6'
               schedule:
                 type: array
                 items:
@@ -114,6 +125,10 @@ requestBody:
                       type: string
                       description: 'Price name or description.'
                       example: 'Monthly Subscription'
+                    description:
+                      type: string
+                      description: 'Price description.'
+                      example: '07:00 - 15:00.'
                     amount:
                       type: string
                       description: 'Price amount.'
@@ -131,28 +146,98 @@ requestBody:
           club:
             type: array
             items:
-              type: string
-            description: 'List of clubs where the coach works.'
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: "ID of the club"
+                  example: "65ca63kj7ae7f10c88b598384"
+                firstName:
+                  type: string
+                  description: "Name of the club"
+                  example: "Fitness Club"
+                lastName:
+                  type: string
+                  description: "Name of the club"
+                  example: "Fitness Club"
+                address:
+                  type: string
+                  description: "Address of the club"
+                  example: "123 Main St"
+                city:
+                  type: string
+                  description: "City of the club"
+                  example: "New York"
+            description: "List of clubs where the coach works"
             example:
-              - '65ca67e7ae7f10c88b598384'
-              - '65ca67e7ae7f10c88b59ke84'
-          couch:
-            type: array
-            items:
-              type: string
-            description: 'List of current coach jobs at this sports club.'
-            example:
-              - '65ca63kj7ae7f10c88b598384'
-              - '65coo7e7ae7f10c88b598384'
-          favorite:
+              - id: "65ca63kj7ae7f10c88b598384"
+                firstName: "Fitness"
+                lastName: "Club"
+                address: "123 Main St"
+                city: "New York"
+              - id: "65coo7e7ae7f10c88b598384"
+                firstName: "Yoga"
+                lastName: "Wellness"
+                address: "456 Elm St"
+                city: "Los Angeles"
+          coach:
             type: array
             items:
               type: object
               properties:
-                type:
+                id:
                   type: string
-                  description: 'Type of favorite item.'
-                  example: '65ca63kj7ae7f10c88b598384'
+                  format: uuid
+                  description: "ID of the coach job"
+                  example: "65ca63kj7ae7f10c88b598384"
+                firstName:
+                  type: string
+                  description: "Name of the coach job"
+                  example: "Personal Trainer"
+                address:
+                  type: string
+                  description: "Address of the coach job"
+                  example: "789 Oak St"
+                city:
+                  type: string
+                  description: "City of the coach job"
+                  example: "New York"
+            description: "List of current coach jobs at this sports club"
+            example:
+              - id: "65ca63kj7ae7f10c88b598384"
+                firstName: "Personal"
+                lastName: "Trainer"
+                address: "789 Oak St"
+                city: "Chicago"
+              - id: "65coo7e7ae7f10c88b598384"
+                firstName: "Group"
+                lastName: "Trainer"
+                address: "101 Pine St"
+                city: "Los Angeles"
+          favorite:
+            type: object
+            properties:
+              userId:
+                type: string
+                format: uuid
+                description: "User ID of the favorite item"
+                example: "65ca63kj7ae7f10c88b598384"
+              role:
+                type: string
+                description: "Role associated with the favorite item"
+                example: "coach"
+          sport:
+            type: array
+            items:
+              type: string
+              description: 'What is the name of the sport?'
+              example:
+                - 'Football'
+                - 'Basketball'
+                - 'Hockey'
+                - 'Tennis'
+                - 'Golf'
 responses:
   '200':
     description: 'User profile updated successfully'

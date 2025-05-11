@@ -17,6 +17,18 @@ const userRegisterSchema = (req, res, next) => {
       .valid('customer', 'coach', 'adminClub')
       .default('customer')
       .optional(),
+    firstName: Joi.string().optional(),
+    lastName: Joi.string().optional(),
+    phone: Joi.string().pattern(patternLines.PHONE).optional().messages({
+      'string.pattern.base': ErrorsApp.NOT_VALID_PHONE,
+    }),
+    address: Joi.string().optional(),
+    city: Joi.string().optional(),
+    // abilities: Joi.string().optional(),
+    abilities: Joi.array().items(Joi.string()).optional(),
+    sport: Joi.string().optional(),
+    avatar: Joi.string().uri(),
+    images: Joi.array().items(Joi.string().uri()),
   });
 
   const validationResult = schema.validate(req.body);

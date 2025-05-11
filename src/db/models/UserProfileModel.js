@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
-import {
-  handleSaveError,
-  setupUpdateValidator,
-} from '../../helpers/helpers.js';
+import { handleSaveError, setupUpdateValidator } from './hooks.js';
 
 const socialLinkSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -11,30 +8,34 @@ const socialLinkSchema = new mongoose.Schema({
 
 const pricesSchema = new mongoose.Schema({
   name: { type: String },
-  amount: { type: String, required: true },
+  description: { type: String },
+  amount: { type: Number, required: true },
+  image: { type: String },
 });
 
-const schedulesSchema = new mongoose.Schema({
-  days: { type: String },
-  hours: {
-    type: String,
-  },
-  date: { type: Date },
-});
-
-//TODO change if you need
 const favoriteSchema = new mongoose.Schema({
-  type: { type: String },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'auth' },
+  role: { type: mongoose.Schema.Types.String, ref: 'auth' },
+});
+
+const workSchema = new mongoose.Schema({
+  id: { type: String },
+  firstName: { type: String },
+  lastName: { type: String },
+  address: { type: String },
+  city: { type: String },
 });
 
 const descriptionSchema = new mongoose.Schema({
   address: { type: String },
+  city: { type: String },
   short_desc: { type: String },
-  abilities: { type: String },
-  schedule: { type: [schedulesSchema] },
+  abilities: { type: [String] },
+  age: { type: String },
+  schedule: {},
   equipment: { type: [String] },
-  experience: { type: [Date] },
-  price: { type: [pricesSchema] },
+  experience: { type: Number },
+  subscriptions: { type: [pricesSchema] },
   social_links: { type: [socialLinkSchema] },
   phone: { type: String },
   email: { type: mongoose.Schema.Types.String, ref: 'auth' },
@@ -43,15 +44,19 @@ const descriptionSchema = new mongoose.Schema({
 const userProfileSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'auth' },
-    firstLastName: { type: String, default: null },
+    countReview: { type: Number, required: true, default: 0 },
+    rating: { type: Number, required: true, default: 0 },
+    firstName: { type: String, default: null },
+    lastName: { type: String, default: null },
     avatar: { type: String },
     images: { type: [String] },
     certificates: { type: [String] },
     description: descriptionSchema,
     role: { type: mongoose.Schema.Types.String, ref: 'auth' },
     favorite: { type: [favoriteSchema] },
-    club: { type: [String] },
-    couch: { type: [String], default: [] },
+    club: { type: [workSchema] },
+    coach: { type: [workSchema] },
+    sport: { type: [String] },
   },
   {
     timestamps: true,

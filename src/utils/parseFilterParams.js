@@ -2,7 +2,7 @@
 const parseType = (type) => {
     if (typeof type !== "string") return;
 
-    const isType = (type) => ["user", "trainer", "club"].includes(type);
+    const isType = (type) => ["costumer", "coach", "adminClub"].includes(type);
 
     return isType ? type : undefined;
 };
@@ -17,10 +17,10 @@ const parseNumber = (number) => {
 };
 
 // розбиття рядка в масив
-const parseServices = (services) => {
-    if (typeof services !== "string") return;
+const parseServices = (abilities) => {
+    if (typeof abilities !== "string") return;
 
-    return services.split(",").map(service => service.trim()).filter(Boolean);
+    return abilities.split(",").map(ability => ability.trim()).filter(Boolean);
 };
 
 //перевірка текстові поля address
@@ -28,15 +28,16 @@ const parseString = value => typeof value === "string" && value.trim().length > 
 
 //головна ф-ія обробки всіх інших
 export const parseFilterParams = query => {
-    const { type, rating, reviewCount, minPrice, maxPrice, address, services } = query;
+    const { role, rating, countReview, minPrice, maxPrice, address, sort, abilities } = query;
 
     return {
-        type: parseType(type),
-        reviewCount: parseNumber(reviewCount),
+        role: parseType(role),
+        countReview: parseNumber(countReview),
         rating: parseNumber(rating),
         minPrice: parseNumber(minPrice),
         maxPrice: parseNumber(maxPrice),
         address: parseString(address),
-        services: parseServices(services)
+        abilities: parseServices(abilities),
+        sort: sort
     };
 };

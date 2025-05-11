@@ -1,0 +1,21 @@
+tags:
+  - Favorite
+summary: Delete fav card by id
+operationId: deleteFavCard
+description: 'Delete favorite card by id'
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '67c4c89d4d695e8b07c91dab'
+responses:
+  '204':
+    description: 'Successfully remove a card from favorites'
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '404':
+    $ref: '../../../components/responses/404.yaml'

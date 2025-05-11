@@ -26,13 +26,29 @@ const login = async (req, res) => {
   if (!passwordCompare) {
     return res.status(401).json({ message: ErrorsApp.NOT_CORRECT_PASSWORD });
   }
-  if (!user.verify) {
-    return res.status(401).json({ message: ErrorsApp.NOT_VERIFICATION(email) });
-  }
 
   const tokens = await loginService(user);
 
-  res.status(200).json(tokens);
+  res.cookie('token', tokens.token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.cookie('refreshToken', tokens.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully logged in',
+    token: tokens.token,
+    refreshToken: tokens.refreshToken,
+  });
 };
 
 export default login;
