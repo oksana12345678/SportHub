@@ -19,7 +19,7 @@ const allowedOrigins = [
   'http://localhost:5174',
   'http://localhost:5175',
   'http://localhost:3000',
-  'https://sporthub-1oiu.onrender.com',
+  'https://sport-front-mu.vercel.app',
 ];
 export const startServer = () => {
   const app = express();
