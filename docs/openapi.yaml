@@ -1,11 +1,11 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: <SportHub App>
+  title: <SportPoint App>
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: <Service for working with backend endpoints documentation. >
+  description: <Service for working with backend documentation. >
   contact:
     email: oksana.tanashuk@gmail.com
 tags:
@@ -13,9 +13,13 @@ tags:
     description: Auth operations.
   - name: UserProfile
     description: Operations about users profiles.
+  - name: SearchUserProfile
+    description: Search operations
+  - name: Reviews
+    description: Operations related to user reviews.
 servers:
+  - url: https://sportpoint-backend.onrender.com
   - url: http://localhost:3000
-  - url: https://sporthub-1oiu.onrender.com
 paths:
   /auth/signup:
     post:
@@ -38,15 +42,54 @@ paths:
   /auth/send/verify:
     post:
       $ref: '../swagger/paths/send/verify/post.yaml'
+  /auth/delete/account:
+    delete:
+      $ref: '../swagger/paths/deleteAccount/delete.yaml'
+  /auth/change/password:
+    put:
+      $ref: '../swagger/paths/updatePassword/put.yaml'
   /profile:
     get:
       $ref: '../swagger/paths/userProfile/get.yaml'
-    delete:
-      $ref: '../swagger/paths/userProfile/delete.yaml'
     patch:
       $ref: '../swagger/paths/userProfile/patch.yaml'
+  /search/by-name:
+    get:
+      $ref: '../swagger/paths/search/get.yaml'
+  /cards:
+    get:
+      $ref: '../swagger/paths/cards/get.yaml'
+  /cards/{id}:
+    get:
+      $ref: '../swagger/paths/cards/{id}/get.yaml'
+  /favorites:
+    get:
+      $ref: '../swagger/paths/favorites/get.yaml'
+  /favorites/{id}:
     post:
-      $ref: '../swagger/paths/userProfile/post.yaml'
+      $ref: '../swagger/paths/favorites/{id}/post.yaml'
+    delete:
+      $ref: '../swagger/paths/favorites/{id}/delete.yaml'
+  /reviews:
+    post:
+      $ref: '../swagger/paths/reviews/post.yaml'
+  /reviews/owner/{id}:
+    get:
+      $ref: '../swagger/paths/reviews/getOwner.yaml'
+  /reviews/user/{id}:
+    get:
+      $ref: '../swagger/paths/reviews/getUser.yaml'
+  /reviews/{id}:
+    patch:
+      $ref: '../swagger/paths/reviews/patch.yaml'
+    delete:
+      $ref: '../swagger/paths/reviews/delete.yaml'
+  /reviews/{id}/reply:
+    patch:
+      $ref: '../swagger/paths/reviews/reply.yaml'
+  /reviews/{id}/report:
+    post:
+      $ref: '../swagger/paths/reviews/report.yaml'
 components:
   securitySchemes:
     bearerAuth:
