@@ -1,17 +1,17 @@
 {
-  "name": "sportpoint_backend",
+  "name": "sport_backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "lint": "eslint src/**/*.js",
-    "start": "node ./src/index.js",
+    "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "build-docs": "redocly bundle docs/openapi.yaml --ext json -o docs/swagger.json",
     "preview-docs": "redocly preview-docs"
   },
   "keywords": [],
-  "author": "Oleksandr Kovalenko",
+  "author": "Oksana Tanashchuk",
   "license": "ISC",
   "description": "",
   "devDependencies": {
